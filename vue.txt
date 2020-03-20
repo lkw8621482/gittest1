@@ -1,0 +1,890 @@
+VUE
+渐进式框架：主张最少
+vue:主张最少，集成很多外在的东西，适合中小型项目
+angular:依赖注入,适合做大项目
+react:主张编程式函数思想，虚拟DOM，有一定的主张
+
+vue特性：1.轻量 2.双向数据绑定 3.指令 4.插件框 组件化
+vue优点：1.简单易用 2.灵活的渐进式框架
+
+mvc思想：
+m：model(数据模型：相当于数据) 
+v：view(视图，相当于html页面) 
+c：control(获取数据，显示到view层。中间枢纽。相当于js ajax)
+
+mvvm思想：
+m：model 模型 相当于传递的数据
+v：view  视图 相当于所看到的页面
+vm：ViewModel 视图模型 连接model和view的桥梁
+         比control更细致
+         视图转化成model
+         model转化成视图
+
+vue：基本使用
+1：引入文件
+2：视图层
+3：视图模型层{el,data,methods}   在vm实例中 如果想要获取data上的数据 methods中的方法  要加上this
+4：表达式（插值表达式）{{}}
+表达式里面既可以是字符串，也可以是数字，绑定data中声明的数据
+str，num，bol，业务逻辑，拼接，数组，对象。。。
+5：v-if和v-show 显示或隐藏
+     v-if如果为false 不渲染
+     v-show如果为false display none
+6：v-on：绑定事件
+      v-on:事件（click）="变量"
+      省略写法@click=""
+      不带有返回值的函数在页面中调用 只能处理数据
+      带有返回值的函数可以在页面中直接调用显示
+7:v-model  v-model=变量
+   用于input标签的type="text" checkbox radio等
+   双向数据绑定
+8:v-bind ：绑定属性的指令 绑定的属性其结果必须为布尔类型
+写法：v-bind:class="{active:true}"
+省略写法:  :class="{active:true}"
+
+[v-cloak] display none 解决插值表达式闪烁问题
+
+v-text和插值表达式作用差不多 但是v-text没有闪烁问题
+v-text会覆盖元素中原本的内容 但插值表达式只会替换自己的占位符
+v-html可以渲染标签
+
+v-for遍历 
+v-for="(item,i) in arr" i为arr数组的索引
+v-for 在遍历对象的时候 第一个参数为值 第二个参数为键 第三个参数为索引
+v-for="(val,key,index) in obj"
+v-for="count in 10" v-for迭代数字
+v-for中key的使用 注意事项 
+key属性只能使用number或者str类型 必须使用v-bind绑定 eg :key="item"
+
+全局过滤器：
+Vue.filter("test"过滤器的名称,function(val过滤器函数 第一个参数 必须 即管道符|前面传递过来的数据){}过滤器要执行的函数)
+调用过滤器：<p>{{msg | test 过滤器的名称}}</p>
+过滤器在调用的时候也可以传递参数
+eg ：<p>{{msg | test('参数1','参数2')}}</p>
+         Vue.fileter('test',function(msg,参数1，参数2){return………}
+
+局部过滤器
+var vm=new Vue({
+el:"#box",
+data:{},
+filters:{test 过滤器名称:function(msg){} }
+})
+过滤器调用的时候采用的就近原则 如果全局过滤器和局部过滤器的名称一致 则优先调用局部过滤器
+
+
+
+vue生命周期：实例在被创建前经过的一系列初始化过程叫生命周期，比如一个人从婴儿到少年到中年到老年的过程
+生命周期钩子：在生命周期中被自动调用的函数叫做生命周期钩子
+生命周期钩子=生命周期函数=生命周期事件
+
+创建期间的生命周期函数
+beforeCreate  在beforeCreate 执行的时候 data和methods都未被初始化
+created         在created    执行的时候 data和methods已经初始化 如果要调用data中的数据和methods中的方法 最早只能在created中操作
+breforeMount  模板编译完成 但是并没有挂载 页面中的元素还没有被替换
+mounted：挂载完成      swiper轮播图 echats数据可视化写在这个里面 
+
+运行期间的生命周期函数 data数据改变 才会触发beforeUpdate和updated生命周期函数
+beforeUpdate 执行 页面显示的数据还是旧的 但data中的数据是已经发生改变之后最新的数据
+updated  执行 页面显示和data中的数据已经同步 都是改变之后的
+
+销毁期间的生命周期函数
+beforeDestroy
+Destroyed
+
+事件修饰符
+.prevent 阻止默认行为
+.stop 阻止冒泡
+.once 只触发一次
+.self只会阻止自己身上冒泡行为的触发
+
+
+
+全局组件
+Vue.component("tab", {
+            template: "<h1>选项卡</h1>"
+        })
+组件的内容必须包裹在一个根标签中
+组件中，如果组件名称在使用驼峰命名时，调用时需要把大写改小写，并用-连接(tmeplate ID不用)
+eg：myTab→my-tab
+每个组件都是一个vue的实例
+全局组件是可以所有实例中应用，局部组件只能在自己的实例中应用
+
+补充 es6 padStart padEnd的使用
+padStart 在字符串起始位置开始填充
+padStart("第一个参数 填充之后几位字符串","第二个参数 用什么字符串来进行填充") 必须是字符串来调用padStart()方法
+eg：var dt=new Date();
+        var d=dt.getDate().toString().padStart(2,'0')
+
+
+
+局部组件
+创建在Vue实例中
+var vm = new Vue({
+el:"#box",
+components:{"tabbar"//组件名称:
+                        {template:"#tabbar"//绑定template
+                         data:(){
+                                     return{} }
+                          methods:
+                          components://子组件
+                                   }
+                         }
+})
+使用场景：出现重复的样式时使用
+data,components(el),methods,props,created 这些属性都要写在template同级的位置
+
+props:
+//期望接收的值，声明在子组件中
+//当前组件中的特殊变量，跟data中声明的变量使用方式一样
+//区别：props中只是在该组件中声明了变量，但自己未赋值
+//具体的变量值，由调用该组件的父组件传递过来 
+接受父组件传递过来的数据
+//和template，data，methods同级
+
+data数据写在父级组件中
+props声明在子级组件中 相当于给html页面声明了新的属性 通过该属性用v-bind的方式去接受data中的值
+
+slot：槽口 创建组件时预留个位置  这个位置的内容是调用该组件的时候传递过来的
+槽口分为具名槽口和不具名槽口 不具名槽口只能有一个
+slot起名只能用name
+给slot加样式时 样式的内容写在组件声明的位置 样式的class写在组件调用的位置
+特殊标签不能直接使用指令 需要在外面包裹一个span
+
+使用场景：图片
+声明的时候用<slot name="img1"></slot>
+调用的时候用<img slot="img1">
+
+$on和$emit  具体使用看案例
+$on：事件监听
+$emit：事件触发
+
+父子传值：具体使用看案例
+1：自定义传值
+2：$emit $on传值  必须在同一组件中 所以用this.$parent.$emit
+
+computed:计算属性,声明一个变量，通过业务逻辑判断得出的值
+computed:{"data":function(){return}}     计算属性在调用的时候 不用加() 计算属性内部 要return出去
+计算属性有缓存的功能 当它依赖的数据未发生变化时 它就不会刷新
+普通方法没有缓存属性，不相干的变量发生变化都会触发方法的更新，影响性能
+props：变量 期望接受的值，调用的时候才传递过来
+watch：监听变量的变化
+watch属性有缓存的功
+能 当它依赖的数据未发生变化时 它就不会刷新
+
+computed,watch,methods三者的区别
+computed 简单的业务逻辑 具有缓存功能 函数内部需要return出去
+watch 监听功能 具有缓存功能 监听某些特定数据的变化
+methods 具体的操作 适合写复杂的业务逻辑 不具有缓存功能
+
+自定义全局指令
+eg:给input获取焦点
+<input type='text' v-focus v-color> 
+Vue.direction("color",{bind:function(el){el.style..color="red"}}）绑定
+Vue.direction("focus",{inserted:function(el){el.focus()}})  插入
+Vue.direction("focus",{update:function(){}})  更新
+参数1：指令的名称 
+参数2：对象，对象身上有一些指令相关的函数
+bind,inserted,update函数中，第一个参数永远是el，表示被绑定指令的那个元素
+和js行为有关的操作 写在inserted中
+样式 写在bind中
+
+自定义局部指令
+directives:{"font-weight":{bind:function(el,binding){el.style.fontweight=binding.value}}}
+
+自定义指令简写 //function等于把代码写到了bind和update中
+direvtives:{"fontweight":function(el,binding){el.style.fontweight=binding.value}}
+
+路由：
+vue.js 核心
+vue-resource.js 交互
+vue-router.js 路由
+
+SPA 单页面应用程序：整个项目只有一个页面，切换的只是页面的某一部分
+路由的作用：切换单页面应用程序中的某一部分的内容
+
+vue动画
+使用transition元素 把需要控制的动画元素 包裹起来
+如果是一组元素 用v-for指令 name需要用transition-group标签包裹起来
+css样式
+.v-enter .v-leave-to一组 动画进入之前和动画结束之后
+.v-neter-active.v-leave-active一组  动画执行过程中
+
+使用第三方类animate.css 引入 :duration统一设置进场和离场的时长
+<transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut" :duration="100"></transition>
+
+动画钩子函数 使用场景 处理半场动画
+<transition>
+v-on:before-enter="beforeEnter" 动画进入前
+v-on:enter="enter"                        动画过程中
+v-on:after-enter="afterEnter"        动画过程后
+</transition>
+methods:{
+beforeEnter(el){}
+enter(el)
+afterEnter(el)
+参数el 指的要执行动画的dom元素
+}
+
+
+
+
+
+
+
+脚手架
+命令行：vue-cli
+运行服务器：none 
+检测none none -v
+
+1.前提：
+安装node npm是node的包管理工具 
+express(连接数据库) axios(交互)  crypto（加密）vuex(数据状态栏) 
+检测node node -v
+
+2.安装vue
+npm i -g vue-cli
+
+解释：
+npm 包管理工具
+i install 安装
+vue-cli vue相关的命令行，具体的包
+-g global 全局安装 电脑上就有了这个环境
+--save/ -S / --save-dev 项目内部安装  npm i vuex --save 
+
+问题：慢 网 如果使用npm 国外的 
+解决:安装淘宝镜像
+npm i -g cnpm --registry=https://registry.npm.taobao.org
+安装之后 npm 换成 cnpm
+cnpm i -g vue-cli
+
+安装node环境时，就自带了npm
+
+3.装环境
+如果不能创建 就安装webpack  
+npm install webpack -g
+
+操作：
+npm i -g vue-cli
+npm install webpack -g
+
+
+避免卡顿：
+npm i -g cnpm --registry=https://registry.npm.taobao.org
+cnpm i -g vue-cli或 npm i -g vue-cli
+cnpm install webpack -g 或 npm install webpack -g
+
+查看node: node -v
+查看vue: vue -V
+
+4.创建项目
+切换进项目目录中：
+切换盘符 f: 回车  
+切换目录：cd 文件夹名称 
+vue init webpack douban 
+出现project name 直接回车
+出现 des... 直接回车
+出现author 直接回车
+出现 runtime 直接回车
+出现vue-router 输入 y 然后回车
+出现eslint 输入n 然后回车
+出现 up unit 输入n 然后回车
+出现e2e test 输入n 然后回车
+出现 yes use NPM
+继续回车，出现进度条
+
+出现进度条时，两个选择
+选择一：等待  自动安装npm包 
+出现
+cd douban
+npm run dev
+出现 http://localhost:8080
+浏览器中输入该路径
+
+选择二：停止 ctrl+c两次 改成手动安装
+切换进项目 cd douban
+手动安装依赖 npm install 或者 cnpm install 回车
+等待
+出现
+all packages installed... 成功
+npm run dev
+出现 http://localhost:8080
+浏览器中输入该路径
+
+问题：vue不是内部或外部命令 
+开始：输入node 找到node prompt 
+
+npm install或 cnpm install 
+装的内容都在项目中的node_modules文件夹中
+
+
+1.node  查看下node  node -v    npm
+2.vue vue环境
+npm i -g cnpm --registry=https://registry.npm.taobao.org
+npm install -g vue-cli 或 cnpm install -g vue-cli
+
+3.建项目
+vue init webpack a
+cd a 
+npm run dev
+
+config/index.js
+port的值
+
+php:9090
+node:1010
+vue:2020
+
+启动项目：cd到项目中 npm run dev
+
+
+vue-cli
+目录
+node-modules：  运行项目的依赖
+build ：webpack的相关配置
+config：项目开发运行的目录
+src：项目的主文件 代码大部分在这里完成
+     assets：存放资源文件 js css img等
+     components：组件存放的位置 
+     router：配置路由的文件
+     APP.vue ：公共部内容 项目入口文件  相当于项目外层包裹的div
+     main.js:项目的主要js文件 存放全局变量，js插件，ui插件的引用
+static：存放静态资源文件 json及图片 slot里面的图片放在stalic里面
+index.html:整个项目的容器
+package.json:整个项目中所用到的插件，这个插件的名称，版本等会显示在package.json中
+readme.md:项目的说明书
+
+
+node：
+./ 引入同级目录
+../引入上级目录
+export导出
+import导入
+
+项目规则：
+1：Vue项目中 想要使用一个文件 就必须导出 然后再导入
+export 导出
+import 导入
+2：每个组件都相当于一个vue实例 每个组件都由template js css组成 通过js导出
+
+
+pages：存放路由组件
+components：存放非路由组件
+
+使用路由组件：1导入 2配置
+
+
+使用非路由组件：1导入 2注册 3使用
+
+只有在router index.js里面用component 其他位置都是components
+调用组件 只显示其组件的内容 所有的东西应该写到组件里面 而不是调用组件的标签里面！！！
+
+tag指令可以渲染元素router-link等
+
+scoped="scoped" 当前页面中的样式只对当前页面起作用
+
+<router-link active-class="act"> 在下面style里面写act的样式
+
+调用组件的三个步骤：
+1 引入
+2 注册组件
+3 标签
+
+router-index.js 引入路由组件
+app.vue引入非路由组件 组件只要引入 就要注册
+
+路由重定向：
+一级路由重定向：
+1：APP.vue 
+beforeCreate() {
+    this.$router.push("/");
+  }
+{
+      path: "/",
+      redirect: "/home"
+    }, 
+2:index.js 
+{
+      path: '/',
+      redirect: "home"
+    },
+二级路由重定向：
+{
+path:"/",
+redirect:"/film"
+},{
+path:"film",
+components:Film
+}
+
+注册组件，components要带{},component不用带{}
+
+查询字符串和query关联
+
+路由传参三种方式
+:  //传参方法一
+  // methods: {
+  //   fn(id) {
+  //     this.$router.push(`/dlist/${id}`);
+  //   }
+  // }
+  //传参方法二
+  // methods: {
+  //   fn(id) {
+  //     this.$router.push({
+  //       name: "d-list",//和index.js里面配置路由的name对应
+  //       params: {
+  //         id: id
+  //       }
+  //     });
+  //   }
+  // }
+  //传参方法三
+  // methods: {
+  //   fn(id) {
+  //     this.$router.push({
+  //       name: "dlist",
+  //       query: {
+  //         id: id
+  //       }
+  //     });
+  //   }
+  // }
+
+
+过滤问题，v-for一定要遍历新的对象！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+
+
+路由守卫
+全局路由守卫
+路由独享守卫
+组件内守卫
+
+在vue中声明全局变量
+
+Vue中插件的使用
+Vue关于插件的使用分两种
+1：本地使用 不推荐
+2：安装 npm使用
+
+1:jquery
+安装jq包
+1 在项目中安装
+npm install jquery --save
+2 配置
+module.exports={
+	  plugins: [
+			    new webpack.ProvidePlugin({
+			      $:"jquery",
+			      jQuery:"jquery",
+			      "windows.jQuery":"jquery"
+			    })
+	],
+}
+3：在main.js中引入
+
+
+2.swiper的使用
+1 安装  npm install swiper --save
+2 使用
+swiper.min.js
+swiper.min.css
+<script>
+import Swiper from "swiper";	
+</script>
+<style>
+@import "swiper/css/swiper.min.css";
+</style>
+3：添加html
+4：初始化轮播图
+mouted(){}
+**********************
+如果一个项目中多处使用轮播图，但是每个轮播图的需求不同，需要设置props
+在mouted var This=this   通过v-bind绑定
+
+
+
+交互 axios
+ json数据放在static里面 交互的代码写在created里面 
+json文件不能放两个数组 不能有注释 不能有单引号 不能有多余的符号
+安装 npm install axios --save
+
+导入
+import axios from "axios"
+
+created(){axios.get('地址').then(函数(res)=>{})}
+
+static：存放静态资源文件 json及图片 slot里面的图片放在stalic里面！！！！！！！！！
+
+axios和ajax
+相同点：都是异步编程
+不同：axios把代码的执行和结果的处理分离，方便维护
+           axios可以按顺序执行，避免回调地域
+
+axios优点
+1.异步编程
+2.执行代码和结果的处理分离了，易于维护，
+this.$http.get("1.txt").then(()=>{})
+3.按顺序执行  解决回调地域问题
+4.捕获错误 抛出错误信息
+axios底层promise实现
+a.异步编程  b.顺序执行 c.捕获错误处理错误信息
+promise原理 使用 面试题
+
+es6的理解，有哪些好用的方法
+1：箭头函数
+2：promise
+3：数组方法 find findindex 拓展运算符
+
+axios的封装三种方法 参考案例api/dm.js
+
+跨域
+1.config/index.js中
+//https://douban.uieee.com/v2
+ proxyTable: {
+    		'/douban': {
+				     target: 'https://douban.uieee.com/v2',
+				     changeOrigin: true,
+				     pathRewrite: {
+				       '^/douban': ''
+				     }
+		   	},
+},
+
+2.封装
+api/douban.js
+import axios from 'axios';
+const intheater = ()=>{
+	let obj = {
+		start:0,
+		count:10,
+		city:""
+	}
+	//get(url,{params:obj})
+	return axios.get('/douban/movie/in_theaters',{params:obj}).then((res)=>res.data)
+}
+//导出
+export default {
+	intheater
+}
+3.使用
+	import douban from './api/douban'
+	douban.intheater().then((res)=>{
+  		console.log(res);
+  	})
+
+注意：跨域配置之后，重启项目
+
+二.豆瓣电影页面
+准备：二级内容搭建
+created(){
+	this.getData();
+},
+mounted(){
+	this.doSwiper();
+},
+
+bug:
+1.图片显示不出来
+处理：<meta name="referrer" content="never">不检测图片是否跨域 共性
+
+处理：https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2568504230.jpg
+					this.intheaterData = res.subjects;
+		  			//每组数中的item.images.small路径进项处理
+		  			this.intheaterData = this.intheaterData.map((item)=>{
+		  				item.images.small = "https://images.weserv.nl/?url="+item.images.small;
+		  				return item;
+	})	
+
+2.页面只显示一条数据
+10dom绑定10条数据
+1个dom绑定一条数据
+		created(){
+			this.getData();
+		},
+		mounted(){
+			this.doSwiper();//dom就绑定了
+		},
+		
+改成：
+		mounted(){
+			//this.doSwiper();//dom就绑定了
+			this.getData();
+		},
+		methods:{
+			getData(){//获取数据
+			  		douban.intheater({start:0,count:10,city:""}).then((res)=>{
+			  			//请求过来的数据 
+			  			this.intheaterData = res.subjects;
+			  			//每组数中的item.images.small路径进项处理
+			  			this.intheaterData = this.intheaterData.map((item)=>{
+			  				item.images.small = "https://images.weserv.nl/?url="+item.images.small;
+			  				return item;
+			  			})
+			  			console.log(this.intheaterData)
+						//数据结果获取之后触发dom更新
+						this.$nextTick(()=>{
+					    	this.doSwiper();//延迟执行
+					    })
+						
+			  		})
+				},
+		}
+
+显示星星：使用bootstrap
+1.引入样式，不引入
+index.html中
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+2.bootstrap的包 放入assets文件夹中  
+实现星星组件
+
+
+三.minit-ui		
+基于vue的ui框架，app
+1.安装：npm i mint-ui -S  和安装axios一样
+2.配置 main.js中配置
+import MintUI from 'mint-ui'
+import 'mint-ui/lib/style.css'
+Vue.use(MintUI)	
+3.使用
+单独引入某个组件
+import Vue from "vue";
+import { Button } from 'mint-ui';
+Vue.component(Button.name, Button);
+
+axios真实接口封装方法  get post方法
+案例：
+request.js 封装
+main.js     配置
+app.vue    调用
+
+返回错误 400 接口炸了
+
+axios拦截器：
+请求之前
+请求方法
+任何一条请求都会有拦截器 分request response
+
+无线滚动加载 mintUI
+数据初始化 一组一组的加载
+案例 gettop250
+
+/:id接口的获取 路径要用字符串拼接的方式
+
+一级路由path设置要加斜杠/ 二级路由path设置不加斜杠/
+
+vue.resource交互  vue不使用脚手架时用的交互 用的很少
+1:导入vue.js vue.resource
+2：语法
+
+es8中的async await 异步函数
+async：异步 async function firstAsync(){return} 不论返回什么 都会转化成promise对象
+await ：等待 结果处理  await firstAsync(){}  不需要.then了
+比promise代码更加简洁，优雅，逻辑更清晰
+1：不需要手动创建promise对象
+2：await直接处理结果 不需要.then  await必须和async组合使用 
+3:async和await就是promise的语法糖
+
+keep-alive 缓存功能 提升性能
+用法：
+1:<keep-alive include="home">
+  		 <router-view/>
+  	</keep-alive>
+home为组件名，你想要哪个组件被缓存，就写在include里面
+
+
+elementUI
+1：安装
+2：引入
+import Vue from 'vue';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI)
+
+vuex 状态栏管理
+定义：集中式存储管理应用所有组件的状态
+作用：共享数据
+vuex适合中大型的项目
+1：装包 npm install vuex --save
+2:导入 src/store/index.js 
+import Vuex from vuex
+import Vue from "vue"
+Vue.use(Vuex)
+用法：
+四个模块 
+state 存储数据
+getters 获取数据
+actions 触发修改数据
+mutations 修改数据
+创建store对象 导出
+let store = new Vuex.Store({
+  state,
+  getters,
+  actions,
+  mutations
+})
+export default store;
+
+//1.存储数据 
+let state = {
+	count:0
+}
+
+//2.获取数据
+let getters = {
+	showCount(state){
+		return state.count;
+	}
+}
+//3.触发修改数据
+如果需要交互，在actions里面获取数据，提交给mutations，在mutations中进行state赋值
+let actions = {
+	add(context){
+		context.commit('doAdd')
+	}
+}
+//4.修改数据
+let mutations = {
+	doAdd(state){
+		state.count++;
+	}
+}
+//5.创建vuex对象实例
+let store = new Vuex.Store({
+	state,getters,actions,mutations
+})
+//统一导出去
+ export default store;
+
+3：使用 整个项目都可以使用这个共享的数据
+1：导入文件index.js
+     导入vuex内置方法 import{ mapGetters, mapState, mapActions,mapMutations } from "vuex";
+
+2 组件中配置store属性
+export default {
+  name: "goods",
+  store: store, //store中存储的数据在该组件中使用
+  computed: mapGetters(["count", "bol", "list"]),
+  methods: {
+    ...mapActions(["add", "sub", "addcount", "subcount"])//触发action
+  }
+};
+获取值两种方法：
+1：computed: mapGetters(["count", "bol", "list"]),
+2：this.$store.getters.count
+
+修改值：
+<button @click='sub'>-</button>
+<span>{{item.count}}</span>
+<button @click='add'>+</button>
+methods:{
+			...mapActions(['sub','add'])
+		}
+
+actions={
+	sub({commit}){
+		commit('sub')
+	}
+}	
+
+mutations = {
+	sub(state){
+	
+	}
+}
+或者
+this.$store.dispatch('add')
+
+通过export方式导出，在导入时要加{ }，export default则不需要
+
+sass
+css预编译 变量 函数 计算 for if
+$main-color:red
+div{color:main-color}
+目前流行的预编译:sass,less,stylus
+
+1：安装环境
+npm install -g sass
+$main-color="red"声明变量
+sass index.scss index.css 将index.scss转化成index.css
+在html文件引入index.css
+sass --watch index.scss:index.css  监控index.scss 并且实时转化成index.css
+@extend:.class1 继承class1的样式
+@minxin div{}声明一个可以复用的样式
+.div1{@include div } .div1使用@minxin div{}中的样式
+@import "index.scss" 在scss文件中在引入另外一个scss文件
+& 父选择器
+
+2：Vue中使用sass
+1:安装依赖
+cnpm install --save-dev sass-loader@7.3.1  
+cnpm install --save-dev style-loader 
+cnpm install --save-dev css-loader 
+cnpm install --save-dev node-sass
+2：配置
+build/webpack.base.conf
+  options: {
+          vueLoaderConfig,
+          loaders: { //配置sass
+            'scss': 'style-loader!css-loader!sass-loader'
+          }
+        }
+3:使用
+<style lang="scss">
+
+npm run build 项目打包
+注意：把项目由开发环境转成运行环境
+config/index.js 中的build{assetsPublicPath: './',} 修改路径
+
+java项目接口：
+2-1：安装java环境  运行接口
+2-1-1：下载jdk,安装，最好安装在c盘
+2-1-2：手动配置环境变量
+2-2：安装mysql,新建数据库shop，执行shop.sql文件
+打开phpstudy mysql
+2-3：启动java接口
+切换进java的接口文件所在的位置 
+cmd中输入 
+java  -jar  shopping-0.0.1-SNAPSHOT.jar
+此时就可以使用接口了
+1.后端环境（不是必须的） java(jdk)  php(phpstudy) .net(.net环境)
+2.前端环境：node,git/svn,ps,vs...
+vue脚手架，webpack环境
+
+vue写app项目：
+rem.js配置进去
+mian.js 引入rem.js import "rem.js"
+
+新建项目如果嫌安装插件麻烦，
+可以复制之前写好的项目package.json然后npm install一起安装
+
+跨域接口配置之后，一定要重启项目才起作用
+
+git：
+世界上最先进最流行的分布式版本控制系统
+分布式 c语言写的
+使用步骤
+1：安装git 右键出现git bash表示安装成功
+2：配置账号密码
+ git config --global user.name ""
+ git config --global user.email ""
+ git config --list 
+3：初始化仓库
+工作区
+暂存区
+版本库
+git init 初始化
+git add 文件名 上传单个
+git add . 上传所有
+git status 查看
+git commit -m ""     提交
+git log 查看提交状态
+git reset --hard 流
+
+
+
+
+
+
+
+
+
